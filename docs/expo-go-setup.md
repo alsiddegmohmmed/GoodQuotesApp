@@ -5,8 +5,7 @@ The repository was originally built on SDK 53. The founder has Expo Go 58 instal
 Run from the GoodQuotesApp checkout on codex/design-foundation with Node 22.13+:
 
 ```bash
-node scripts/upgrade-expo58.mjs
-npx expo start --go --tunnel --clear
+node scripts/upgrade-expo58.mjs && npx expo start --go --tunnel --clear
 ```
 
 Scan the QR with the iPhone camera. The local library, clipboard imports, text capture and browsing do not require the AI backend. AI and semantic discovery require the private gateway and credentials described in companion-setup.md. Expo Go is a development preview; native widgets and standalone distribution are outside this preview.
@@ -17,3 +16,5 @@ Official references:
 - https://docs.expo.dev/workflow/upgrading-expo-sdk-walkthrough/
 - https://docs.expo.dev/versions/v58.0.0/sdk/filesystem/
 - https://docs.expo.dev/versions/v58.0.0/sdk/reanimated/
+
+Recovery from an earlier ERESOLVE: stop Metro. Pull the updated migration helper and rerun it. It now resolves a clean lockfile in an isolated temporary directory before replacing the root lockfile and installing through npm ci, avoiding the installed SDK 53 tree. Only start Metro after the helper succeeds and confirms SDK 58. Existing app source edits outside the two file-system imports and app configuration are left untouched. The updated helper is not yet verified on the developer's Mac.
