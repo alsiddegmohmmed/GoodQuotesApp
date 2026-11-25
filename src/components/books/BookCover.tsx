@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
-import type { Book } from '../../data/preview';
+import type { Book } from '../../data/personalLibrary';
 import { colors, radius, spacing, typography } from '../../theme/tokens';
 
 export function BookCover({ book }: { book: Book }) {
   const [failed, setFailed] = useState(false);
   return (
     <View accessible accessibilityLabel={book.title + ' cover'} style={[styles.cover, { backgroundColor: book.color }]}>
-      {!failed ? <Image accessible={false} source={{ uri: 'https://covers.openlibrary.org/b/isbn/' + book.isbn + '-M.jpg?default=false' }} style={StyleSheet.absoluteFillObject} resizeMode="cover" onError={() => setFailed(true)} /> : null}
-      {failed ? <View style={styles.fallback}><Text style={styles.title}>{book.title}</Text><Text style={styles.author}>{book.author}</Text></View> : null}
+      {!failed && book.isbn ? <Image accessible={false} source={{ uri: 'https://covers.openlibrary.org/b/isbn/' + book.isbn + '-M.jpg?default=false' }} style={StyleSheet.absoluteFillObject} resizeMode="cover" onError={() => setFailed(true)} /> : null}
+      {failed || !book.isbn ? <View style={styles.fallback}><Text style={styles.title}>{book.title}</Text><Text style={styles.author}>{book.author}</Text></View> : null}
     </View>
   );
 }
