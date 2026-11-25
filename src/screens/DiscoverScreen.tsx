@@ -8,7 +8,7 @@ import type { ConnectionRelation } from '../data/personalLibrary';
 import { colors, radius, spacing, typography } from '../theme/tokens';
 
 const relations: ConnectionRelation[] = ['Agreement', 'Contrast', 'Complement', 'Recurring question', 'Other'];
-export function DiscoverScreen({ onOpenBook }: { onOpenBook: (id: string) => void }) {
+export function DiscoverScreen({ onOpenBook, onCompanion }: { onOpenBook: (id: string) => void; onCompanion: (sourceIds?: string[]) => void }) {
   const { library, saving, change } = useLibrary();
   const [query, setQuery] = useState(''), [leftId, setLeft] = useState<string | null>(null), [rightId, setRight] = useState<string | null>(null);
   const [relation, setRelation] = useState<ConnectionRelation | undefined>(), [reflection, setReflection] = useState(''), [error, setError] = useState('');
@@ -26,6 +26,7 @@ export function DiscoverScreen({ onOpenBook }: { onOpenBook: (id: string) => voi
   }
   return <Screen>
     <ScreenHeading title="Discover" subtitle="Ideas from different books, in conversation." />
+    <Pressable style={[styles.action,styles.selected]} onPress={()=>onCompanion()}><Text style={styles.dark}>Explore with your reading companion</Text></Pressable>
     {!left && suggested && <View style={styles.panel}>
       <Text style={styles.eyebrow}>A POSSIBLE COMPARISON</Text>
       <Text style={styles.body}>These saved passages share the words {suggested.shared.join(', ')}. This is a text match, not an interpretation.</Text>
@@ -38,6 +39,7 @@ export function DiscoverScreen({ onOpenBook }: { onOpenBook: (id: string) => voi
       <PassageCard highlight={left} onOpenBook={() => onOpenBook(left.bookId)} />
       {right ? <>
         <PassageCard highlight={right} onOpenBook={() => onOpenBook(right.bookId)} />
+        <Pressable style={styles.action} onPress={()=>onCompanion([left.id,right.id])}><Text style={styles.body}>Discuss these passages with AI</Text></Pressable>
         <Text style={styles.meta}>How do these ideas relate? Your interpretation is optional until you save a connection.</Text>
         <View style={styles.row}>{relations.map(r => <Pressable key={r} onPress={() => setRelation(r)} style={[styles.action, relation === r && styles.selected]}><Text style={relation === r ? styles.dark : styles.body}>{r}</Text></Pressable>)}</View>
         <TextInput multiline value={reflection} onChangeText={setReflection} placeholder="Your reflection or question (optional)" placeholderTextColor={colors.textMuted} style={styles.input} />
@@ -65,6 +67,7 @@ export function DiscoverScreen({ onOpenBook }: { onOpenBook: (id: string) => voi
         <PassageCard highlight={a} onOpenBook={() => onOpenBook(a.bookId)} />
         <PassageCard highlight={b} onOpenBook={() => onOpenBook(b.bookId)} />
         {!!c.reflection && <Text selectable style={styles.body}>{c.reflection}</Text>}
+        <Pressable style={styles.action} onPress={()=>onCompanion([a.id,b.id])}><Text style={styles.body}>Discuss this connection</Text></Pressable>
         <Pressable style={styles.action} onPress={() => choose(a.id,b.id,c.relation,c.reflection)}><Text style={styles.meta}>Edit connection</Text></Pressable>
       </View>;
     })}

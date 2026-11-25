@@ -15,7 +15,7 @@ export function MainTabs({ navigation }: StackScreenProps<RootStackParamList, 'M
   const openBook = (bookId: string) => navigation.navigate('BookDetail', { bookId });
   return <SafeAreaView edges={['top', 'left', 'right', 'bottom']} style={styles.safe}>
     <View style={styles.content}>
-      {active === 'Today' ? <TodayScreen onOpenBook={openBook} /> : active === 'Library' ? <LibraryScreen onOpenBook={openBook} onAdd={() => navigation.navigate('LibraryTools', { mode: 'add' })} onImport={() => navigation.navigate('LibraryTools', { mode: 'import' })} onImportQuotes={() => navigation.navigate('LibraryTools', { mode: 'quotes' })} /> : active === 'Discover' ? <DiscoverScreen onOpenBook={openBook} /> : <ProfileScreen onLegacy={() => navigation.navigate('LegacyQuotes')} />}
+      {active === 'Today' ? <TodayScreen onOpenBook={openBook} /> : active === 'Library' ? <LibraryScreen onOpenBook={openBook} onAdd={() => navigation.navigate('LibraryTools', { mode: 'add' })} onImport={() => navigation.navigate('LibraryTools', { mode: 'import' })} onImportQuotes={() => navigation.navigate('LibraryTools', { mode: 'quotes' })} /> : active === 'Discover' ? <DiscoverScreen onOpenBook={openBook} onCompanion={sourceIds => navigation.navigate('Companion', { sourceIds })} /> : <ProfileScreen onLegacy={() => navigation.navigate('LegacyQuotes')} />}
     </View>
     <BottomNavigation active={active} onSelect={setActive} />
   </SafeAreaView>;
