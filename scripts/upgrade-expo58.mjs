@@ -16,7 +16,7 @@ try {
   const archive = join(temp, packed[0].filename);
   const bundled = JSON.parse(run('tar', ['-xOf', archive, 'package/bundledNativeModules.json'], { encoding: 'utf8' }));
   if (!String(packed[0].version).startsWith('58.')) throw new Error('Unexpected Expo version.');
-  const required = ['react', 'react-native', 'expo-status-bar', 'expo-clipboard', 'expo-sharing', 'expo-file-system', 'expo-document-picker', 'expo-font', 'react-native-gesture-handler', 'react-native-reanimated', 'react-native-worklets', 'react-native-safe-area-context', 'react-native-screens'];
+  const required = ['react', 'react-native', 'expo-status-bar', 'expo-clipboard', 'expo-sharing', 'expo-file-system', 'expo-document-picker', 'expo-secure-store', 'expo-font', 'react-native-gesture-handler', 'react-native-reanimated', 'react-native-worklets', 'react-native-safe-area-context', 'react-native-screens'];
   for (const name of required) {
     if (typeof bundled[name] !== 'string') throw new Error('Expo SDK metadata is missing ' + name + '; inspect before proceeding.');
     pkg.dependencies[name] = bundled[name];
@@ -49,6 +49,7 @@ try {
   // npm ci removes the stale node_modules tree before installing the new lockfile.
   run('npm', ['ci'], { stdio: 'inherit' });
   run('npx', ['expo', 'install', '--fix'], { stdio: 'inherit' });
+  run('npm', ['install','--save-exact','@supabase/supabase-js','react-native-url-polyfill'], {stdio:'inherit'});
   const installed = JSON.parse(readFileSync(join(root, 'node_modules/expo/package.json'), 'utf8')).version;
   if (!String(installed).startsWith('58.')) throw new Error('Installed Expo is not SDK 58.');
   console.log('Installed Expo ' + installed);

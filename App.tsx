@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LibraryProvider } from './src/data/LibraryProvider';
+import { AuthGate } from './src/data/AuthGate';
 import { CompanionScreen } from './src/screens/CompanionScreen';
 import { LibraryToolsScreen } from './src/screens/LibraryToolsScreen';
 import { MainTabs } from './src/navigation/MainTabs';
@@ -22,7 +23,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <StatusBar style="light" />
-      <LibraryProvider>
+      <AuthGate>{userId=><LibraryProvider key={userId} userId={userId}>
       <NavigationContainer theme={theme}>
         <Stack.Navigator screenOptions={{ headerShown: false, cardStyle: { backgroundColor: colors.bg } }}>
           <Stack.Screen name="Main" component={MainTabs} />
@@ -32,7 +33,7 @@ export default function App() {
           <Stack.Screen name="LegacyQuotes" component={HomeScreen} options={{ headerShown: true, title: 'Original quote feed' }} />
         </Stack.Navigator>
       </NavigationContainer>
-      </LibraryProvider>
+      </LibraryProvider>}</AuthGate>
     </SafeAreaProvider>
   );
 }

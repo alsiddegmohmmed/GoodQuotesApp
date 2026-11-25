@@ -4,11 +4,13 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { exportCSV, type CsvExport } from '../data/csvExport';
 import * as Sharing from 'expo-sharing';
 import { useLibrary } from '../data/LibraryProvider';
+import { useAuth } from '../data/AuthGate';
 import { Screen, ScreenHeading } from '../components/layout/Screen';
 import { colors, spacing, typography, radius } from '../theme/tokens';
 
-export function ProfileScreen({ onLegacy }: { onLegacy: () => void }) {
-  const { library } = useLibrary();
+export function ProfileScreen() {
+  const { library,saving,refresh } = useLibrary();
+  const { session,signOut }=useAuth();
   const [busy, setBusy] = useState(false), [error, setError] = useState('');
   async function exportLibrary(kind: 'json' | CsvExport) {
     setBusy(true); setError('');
@@ -27,12 +29,14 @@ export function ProfileScreen({ onLegacy }: { onLegacy: () => void }) {
   }
   return <Screen>
     <ScreenHeading title="Profile" subtitle="Your personal reading memory." />
-    <Text style={styles.body}>Your library is stored on this device. Export a copy before uninstalling or changing phones.</Text>
+    <Text style={styles.body}>{session.user.email}</Text>
+    <Text style={styles.meta}>Your library is saved to your private cloud account.</Text>
+    <Pressable style={styles.action} disabled={saving||busy} onPress={async()=>{setError('');try{await refresh();}catch(e){setError(e instanceof Error?e.message:'Refresh failed.');}}}><Text style={styles.body}>{saving?'Syncing…':'Refresh library'}</Text></Pressable>
     <Pressable style={styles.action} disabled={busy} onPress={()=>exportLibrary('json')}><Text style={styles.body}>{busy ? 'Preparing export…' : 'Export library as JSON'}</Text><Text style={styles.meta}>Includes private notes and connections. Choose where to save or share it.</Text></Pressable>
     <Pressable style={styles.action} disabled={busy} onPress={()=>exportLibrary('books')}><Text style={styles.body}>Export books as CSV</Text><Text style={styles.meta}>{library.books.length} books · Save to Files or share</Text></Pressable>
     <Pressable style={styles.action} disabled={busy} onPress={()=>exportLibrary('highlights')}><Text style={styles.body}>Export highlights as CSV</Text><Text style={styles.meta}>{library.highlights.length} highlights with book details and notes</Text></Pressable>
     {!!error && <Text accessibilityLiveRegion="polite" style={styles.meta}>{error}</Text>}
-    <Pressable style={styles.action} onPress={onLegacy}><Text style={styles.body}>Open original quote feed</Text><Text style={styles.meta}>Separate public collection; requires the old backend.</Text></Pressable>
+    <Pressable style={styles.action} disabled={saving||busy} onPress={async()=>{setBusy(true);setError('');try{await signOut();}catch(e){setError(e instanceof Error?e.message:'Sign out failed.');}finally{setBusy(false);}}}><Text style={styles.body}>Sign out</Text></Pressable>
   </Screen>;
 }
 const styles = StyleSheet.create({
