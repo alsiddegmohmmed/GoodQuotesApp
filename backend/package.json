@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "companion": "node companion/server.js",
-    "test:companion": "node --test companion/contract.test.js"
+    "test:companion": "node --test companion/*.test.js"
   },
   "keywords": [],
   "author": "",

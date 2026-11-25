@@ -5,6 +5,7 @@ import { Screen, ScreenHeading, SectionHeading } from '../components/layout/Scre
 import { useLibrary } from '../data/LibraryProvider';
 import { prepareEvidence, askCompanion, type Answer, type Turn } from '../data/companion';
 import { searchPassages, recordConnection } from '../data/connections';
+import { AutomaticDiscovery } from '../components/quotes/AutomaticDiscovery';
 import { PassageCard } from '../components/quotes/PassageCard';
 import type { RootStackParamList } from '../navigation/types';
 import type { ConnectionRelation } from '../data/personalLibrary';
@@ -66,6 +67,8 @@ export function CompanionScreen({route,navigation}:StackScreenProps<RootStackPar
     {!selected.length&&<Text style={styles.meta}>Choose actual saved material below.</Text>}
     <View style={styles.row}><Text style={[styles.body,{flex:1}]}>Include the selected passages' personal notes</Text><Switch disabled={busy} value={includeNotes} onValueChange={v=>{setIncludeNotes(v);resetContext();}} /></View>
     <TextInput editable={!busy} multiline value={question} onChangeText={v=>{setQuestion(v);setConsent(false);}} placeholder={mode==='connect'?'Optional question or theme':'What would you like to discuss?'} placeholderTextColor={colors.textMuted} style={styles.input} maxLength={2000}/>
+    <AutomaticDiscovery library={library} mode={mode} question={question} includeNotes={includeNotes} preferredId={ids[0]} base={base} token={token} busy={busy} setBusy={setBusy} onError={setError} onSelected={next=>{setIds(next);resetContext();setStatus('Semantic selection ready. Review the passages above before sending your question.');}} />
+    {!answer&&!!status&&<Text style={styles.meta}>{status}</Text>}
     <View style={styles.row}><Switch disabled={busy} value={consent} onValueChange={setConsent}/><Text style={[styles.meta,{flex:1}]}>Allow this request to send selected passages, book metadata, {includeNotes?'their notes, ':''}your question and up to six recent conversation messages to your configured server and its model provider. Provider data policies apply.</Text></View>
     <Pressable disabled={!consent||busy||!ids.length||!base.trim()||!token.trim()} onPress={async()=>{await send();setConsent(false);}} style={[styles.action,styles.selected,(!consent||busy)&&{opacity:0.5}]}><Text style={styles.dark}>{busy?'Thinking…':mode==='connect'?'Find a meaningful connection':'Send question'}</Text></Pressable>
     {!!error&&<Text accessibilityLiveRegion="polite" style={styles.body}>{error}</Text>}
