@@ -10,7 +10,7 @@ Its purpose is to make reading a lasting part of someone's intellectual life. A 
 
 GoodQuotes is not simply a quote collection, a reading tracker, or an AI book-summary app. It is a living personal library that helps readers remember, reflect, and discover.
 
-GoodQuotes is the working name inherited from the existing projects; final branding has not been decided.
+GoodQuotes is the working name inherited from the existing projects; Mnemos is retained as a secondary possible name. Final branding has not been decided.
 
 ## Why it exists
 
@@ -131,3 +131,6 @@ GoodQuotes is a personal reading companion that remembers the books, passages, a
 ---
 
 This document describes the product concept discussed to date. The mobile-first direction and three-screen visual reference are approved; detailed future capabilities describe the shared product vision, not claims about shipped functionality or finalized specifications. It contains no release schedule, engineering plan, pricing decision, or implementation commitments.
+
+
+See [full product feature specification](product-features.md) for the detailed experience contract and [first usable mobile build](first-mobile-build.md) for the separate initial scope.
