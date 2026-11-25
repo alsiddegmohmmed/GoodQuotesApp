@@ -16,7 +16,7 @@ try {
   const archive = join(temp, packed[0].filename);
   const bundled = JSON.parse(run('tar', ['-xOf', archive, 'package/bundledNativeModules.json'], { encoding: 'utf8' }));
   if (!String(packed[0].version).startsWith('58.')) throw new Error('Unexpected Expo version.');
-  const required = ['react', 'react-native', 'expo-status-bar', 'expo-clipboard', 'expo-sharing', 'expo-file-system', 'expo-font', 'react-native-gesture-handler', 'react-native-reanimated', 'react-native-worklets', 'react-native-safe-area-context', 'react-native-screens'];
+  const required = ['react', 'react-native', 'expo-status-bar', 'expo-clipboard', 'expo-sharing', 'expo-file-system', 'expo-document-picker', 'expo-font', 'react-native-gesture-handler', 'react-native-reanimated', 'react-native-worklets', 'react-native-safe-area-context', 'react-native-screens'];
   for (const name of required) {
     if (typeof bundled[name] !== 'string') throw new Error('Expo SDK metadata is missing ' + name + '; inspect before proceeding.');
     pkg.dependencies[name] = bundled[name];

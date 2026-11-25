@@ -42,7 +42,7 @@ export function DiscoverScreen({ onOpenBook, onCompanion }: { onOpenBook: (id: s
         <Pressable style={styles.action} onPress={()=>onCompanion([left.id,right.id])}><Text style={styles.body}>Discuss these passages with AI</Text></Pressable>
         <Text style={styles.meta}>How do these ideas relate? Your interpretation is optional until you save a connection.</Text>
         <View style={styles.row}>{relations.map(r => <Pressable key={r} onPress={() => setRelation(r)} style={[styles.action, relation === r && styles.selected]}><Text style={relation === r ? styles.dark : styles.body}>{r}</Text></Pressable>)}</View>
-        <TextInput multiline value={reflection} onChangeText={setReflection} placeholder="Your reflection or question (optional)" placeholderTextColor={colors.textMuted} style={styles.input} />
+        <TextInput multiline scrollEnabled value={reflection} onChangeText={setReflection} placeholder="Your reflection or question (optional)" placeholderTextColor={colors.textMuted} style={[styles.input, {height:120,maxHeight:120,textAlignVertical:'top'}]} />
         <Pressable disabled={saving || !relation} style={[styles.action, styles.selected, !relation && { opacity: 0.5 }]} onPress={() => record(left.id, right.id, 'saved')}><Text style={styles.dark}>Save connection</Text></Pressable>
       </> : <Text style={styles.meta}>Choose a passage from a different book below.</Text>}
       <Pressable onPress={clear}><Text style={styles.meta}>Clear selection</Text></Pressable>

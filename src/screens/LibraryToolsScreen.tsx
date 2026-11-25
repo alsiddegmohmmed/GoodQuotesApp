@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
+import { pickImportFile } from '../data/importFile';
 import type { StackScreenProps } from '@react-navigation/stack';
 import { QuoteImportScreen } from './QuoteImportScreen';
 import { Screen, ScreenHeading } from '../components/layout/Screen';
@@ -12,7 +12,8 @@ import { colors, radius, spacing, typography } from '../theme/tokens';
 export function LibraryToolsScreen({ route, navigation }: StackScreenProps<RootStackParamList, 'LibraryTools'>) {
   const { library, change, saving } = useLibrary();
   const [title, setTitle] = useState(''), [author, setAuthor] = useState(''), [isbn, setIsbn] = useState('');
-  const [csv, setCsv] = useState(''), [error, setError] = useState('');
+  const [fileName, setFileName] = useState(''), [error, setError] = useState('');
+  const [picking, setPicking] = useState(false);
   const [preview, setPreview] = useState<ReturnType<typeof parseGoodreads> | null>(null);
   const importing = route.params.mode === 'import';
   async function add() {
@@ -21,6 +22,17 @@ export function LibraryToolsScreen({ route, navigation }: StackScreenProps<RootS
       await change(current => mergeBooks(current, [book]));
       navigation.replace('BookDetail', { bookId: book.id });
     } catch (e) { setError(e instanceof Error ? e.message : 'Could not save.'); }
+  }
+  async function chooseFile() {
+    if(picking||saving)return;
+    setPicking(true);setError('');
+    try {
+      const file=await pickImportFile('csv');
+      if(!file)return;
+      setFileName(file.name);setPreview(null);
+      setPreview(parseGoodreads(file.text));
+    } catch(e) {setPreview(null);setFileName('');setError(e instanceof Error?e.message:'Could not read the CSV.');}
+    finally {setPicking(false);}
   }
   async function commitImport() {
     if (!preview) return;
@@ -33,19 +45,12 @@ export function LibraryToolsScreen({ route, navigation }: StackScreenProps<RootS
   return <Screen>
     <ScreenHeading title={importing ? 'Import Goodreads' : 'Add a book'} />
     {importing ? <>
-      <Text style={styles.body}>Paste your exported Goodreads CSV. It stays on this device. Review the counts before importing.</Text>
-      <Pressable style={styles.button} onPress={async () => {
-        try { setCsv(await Clipboard.getStringAsync()); setPreview(null); setError(''); }
-        catch { setError('Could not read clipboard. Paste into the field instead.'); }
-      }}><Text style={styles.buttonText}>Paste CSV from clipboard</Text></Pressable>
-      <TextInput accessibilityLabel="Goodreads CSV" multiline autoCapitalize="none" autoCorrect={false} value={csv} onChangeText={v => { setCsv(v); setPreview(null); setError(''); }} placeholder="Paste CSV text" placeholderTextColor={colors.textMuted} style={[styles.input, { minHeight: 100 }]} />
-      <Pressable style={styles.button} disabled={saving} onPress={() => {
-        try { setPreview(parseGoodreads(csv)); setError(''); }
-        catch (e) { setPreview(null); setError(e instanceof Error ? e.message : 'Invalid CSV.'); }
-      }}><Text style={styles.buttonText}>Preview import</Text></Pressable>
+      <Text style={styles.body}>Select your Goodreads CSV from Files or iCloud Drive.</Text>
+      <Pressable style={styles.button} disabled={picking||saving} onPress={chooseFile}><Text style={styles.buttonText}>{picking?'Opening Files…':fileName?'Choose another CSV':'Choose CSV file'}</Text></Pressable>
+      {!!fileName&&<Text numberOfLines={2} style={styles.body}>{fileName}</Text>}
       {preview && <>
         <Text style={styles.body}>{preview.books.filter(b => !library.books.some(x => x.id === b.id)).length} new books · {preview.books.filter(b => library.books.some(x => x.id === b.id)).length} already imported · {preview.skipped} skipped rows. Existing records will not be overwritten.</Text>
-        <Pressable style={styles.button} disabled={saving || !preview.books.length} onPress={commitImport}><Text style={styles.buttonText}>{saving ? 'Saving…' : 'Import books'}</Text></Pressable>
+        <Pressable style={styles.button} disabled={picking || saving || !preview.books.some(b=>!library.books.some(x=>x.id===b.id))} onPress={commitImport}><Text style={styles.buttonText}>{saving ? 'Saving…' : 'Import books'}</Text></Pressable>
       </>}
     </> : <>
       <TextInput accessibilityLabel="Title" value={title} onChangeText={setTitle} placeholder="Title" placeholderTextColor={colors.textMuted} style={styles.input} />
