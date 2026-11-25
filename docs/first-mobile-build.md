@@ -1,0 +1,22 @@
+# First usable mobile build — GoodQuotes / Mnemos
+
+Purpose: put a working private intellectual companion on the founder's phone rapidly, rather than launch a public product or build another tracker. Full vision: [product-features.md](product-features.md). Existing UI preview is not evidence of working personal features.
+
+## Required first experience
+1. Private persistent library. Import the founder's Goodreads export and existing quotes; support at least Kindle clippings and Readwise file exports as initial import paths. Preview matching, preserve source and available dates, report errors and prevent accidental duplicates. Manual book/quote capture works without imports. Do not require a third-party subscription or automatic sync to test.
+2. Capture: paste/type, camera photo with editable extracted text, and optional voice note capture/transcription. Save actual passage, book and known location plus optional own note. Keep original source distinct from the user's interpretation. Reopen after app restart.
+3. Rediscover: a small daily selection from the real private library; configurable quote notifications and a simple home-screen quote widget. Choose a mixture of meaningful older material, explicitly favored passages and relevance to current reading; fall back gracefully if little evidence exists. A quote can stand alone. Tapping opens the actual item. No obligatory review session; snooze/pause and private lock-screen controls.
+4. Connect: propose a grounded cross-book link from real saved material, explain the relationship and show evidence. Prefer a single meaningful contrast or complement to a flood of similarity matches. Accept, dismiss or correct a suggestion. If only book metadata exists, clearly label a book-level thematic suggestion, not a personal memory.
+5. Converse: a library-grounded text and voice conversation about a specific connection or question, with source links and continuity where permitted. Allow the reader to save their own reflection, without requiring it. No fabricated quotes, beliefs or memories. Acknowledge missing evidence. Spoiler-aware.
+6. Control: private by default, export of personal library and notes, deletion/correction, safe access control and secrets kept server-side. No public sharing by default. Basic reading status is utility only.
+
+## Fast-path choices (proposed, not locked implementation)
+Reuse the existing React Native/Expo app and approved theme rather than start another application. Inspect existing API and the related web application's database before selecting a shared data model. Use file-based import before investing in direct third-party integrations. Start with a small set of explainable retrieval/ranking rules plus model-assisted grounded connections; do not require a dedicated graph database, full book ingestion, or elaborate autonomous agents. Native widgets/voice/notifications may require a development build and platform configuration; verify on the actual iPhone rather than asserting Expo Go supports every capability. Select distribution (local development build or TestFlight) after inspecting signing/account availability. No public App Store launch is required for the personal experiment.
+
+## Not required for the first usable version
+Public social feed, full shared reading, elaborate knowledge graph visualization, annual retrospectives, analytics dashboards, comprehensive direct-sync integrations, full ebook reader, broad commercial launch or payment infrastructure. These are scope choices, not removal of the broader product vision.
+
+## Acceptance on the founder's phone
+Import existing data; verify the imported counts and sources; save a physical-book quotation; close and reopen the app and see it; receive a scheduled quotation notification; open the widget and view a saved passage; generate a real cross-book link with inspectable sources; discuss it and save a reflection; verify that subsequent rediscovery can use that reflection; correct/dismiss an incorrect inference; export the library. Test failure cases: malformed import, repeated import, failed OCR, network loss, missing evidence, denied notification/microphone permission and another user's inaccessible data. No sample data may be presented as personal history. The core hypothesis is whether the connections and reminders feel genuinely personal, not whether the app counts reading sessions.
+
+No implementation completion is asserted by this document. The first build has not been verified on a phone.
