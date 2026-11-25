@@ -23,6 +23,7 @@ export function PassageCard({ highlight, featured = false, onOpenBook }: { highl
     {featured ? <Text style={styles.eyebrow}>A PASSAGE FOR TODAY</Text> : null}
     <Text selectable style={[styles.passage, featured && styles.largePassage]}>“{highlight.text}”</Text>
     {highlight.location ? <Text style={styles.author}>{highlight.location}</Text> : null}
+    {highlight.source ? <Text style={styles.author}>Imported from {highlight.source === 'quote-csv' ? 'quotes CSV' : highlight.source}{highlight.sourceDate ? ' · ' + highlight.sourceDate : ''}</Text> : null}
     {highlight.note ? <View><Text style={styles.eyebrow}>YOUR NOTE</Text><Text selectable style={styles.book}>{highlight.note}</Text></View> : null}
     <View style={styles.footer}>
       {onOpenBook ? <Pressable accessibilityRole="button" accessibilityLabel={'Open ' + (book?.title ?? 'book')} onPress={onOpenBook} style={styles.source}>

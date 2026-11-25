@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import type { StackScreenProps } from '@react-navigation/stack';
+import { QuoteImportScreen } from './QuoteImportScreen';
 import { Screen, ScreenHeading } from '../components/layout/Screen';
 import { useLibrary } from '../data/LibraryProvider';
 import { manualBook, mergeBooks, parseGoodreads } from '../data/personalLibrary';
@@ -28,6 +29,7 @@ export function LibraryToolsScreen({ route, navigation }: StackScreenProps<RootS
       navigation.goBack();
     } catch (e) { setError(e instanceof Error ? e.message : 'Import failed.'); }
   }
+  if (route.params.mode === 'quotes') return <QuoteImportScreen onDone={() => navigation.goBack()} />;
   return <Screen>
     <ScreenHeading title={importing ? 'Import Goodreads' : 'Add a book'} />
     {importing ? <>

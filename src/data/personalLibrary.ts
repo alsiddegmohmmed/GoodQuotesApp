@@ -2,14 +2,20 @@ export type ReadingStatus = 'Reading' | 'Finished' | 'Saved';
 export type Book = {
   id: string; title: string; author: string; isbn: string; color: string;
   status: ReadingStatus; progress: number | null; about: string;
-  source?: 'goodreads' | 'manual'; dateRead?: string; dateAdded?: string;
+  source?: 'goodreads' | 'manual' | 'kindle' | 'readwise' | 'quote-csv'; dateRead?: string; dateAdded?: string;
   rating?: string; review?: string; privateNote?: string;
 };
 export type Highlight = {
   id: string; bookId: string; text: string; location?: string;
   note?: string; createdAt: string; favorite?: boolean;
+  source?: 'kindle' | 'readwise' | 'quote-csv'; sourceDate?: string; sourceId?: string;
 };
-export type Library = { books: Book[]; highlights: Highlight[] };
+export type ConnectionRelation = 'Agreement' | 'Contrast' | 'Complement' | 'Recurring question' | 'Other';
+export type Connection = {
+  leftId: string; rightId: string; state: 'saved' | 'dismissed';
+  relation?: ConnectionRelation; reflection?: string; createdAt: string;
+};
+export type Library = { books: Book[]; highlights: Highlight[]; connections?: Connection[] };
 export const emptyLibrary: Library = { books: [], highlights: [] };
 
 export function newId(prefix: string): string {
@@ -124,9 +130,28 @@ export function isLibrary(value: unknown): value is Library {
     if (!h || typeof h.id !== 'string' || highlightIds.has(h.id) ||
       !ids.has(h.bookId) || typeof h.text !== 'string' || !h.text.trim() ||
       typeof h.createdAt !== 'string' || !Number.isFinite(Date.parse(h.createdAt)) ||
-      ![h.location, h.note].every(x => x === undefined || typeof x === 'string') ||
-      !(h.favorite === undefined || typeof h.favorite === 'boolean')) return false;
+      ![h.location, h.note, h.sourceDate, h.sourceId].every(x => x === undefined || typeof x === 'string') ||
+      !(h.favorite === undefined || typeof h.favorite === 'boolean') ||
+      !(h.source === undefined || ['kindle', 'readwise', 'quote-csv'].includes(h.source))) return false;
     highlightIds.add(h.id);
+  }
+  if (v.connections !== undefined) {
+    if (!Array.isArray(v.connections)) return false;
+    const byId = new Map(v.highlights.map(h => [h.id, h]));
+    const pairs = new Set<string>();
+    for (const c of v.connections) {
+      if (!c || typeof c.leftId !== 'string' || typeof c.rightId !== 'string' ||
+        !byId.has(c.leftId) || !byId.has(c.rightId) ||
+        byId.get(c.leftId)?.bookId === byId.get(c.rightId)?.bookId ||
+        !['saved', 'dismissed'].includes(c.state) ||
+        typeof c.createdAt !== 'string' || !Number.isFinite(Date.parse(c.createdAt)) ||
+        (c.reflection !== undefined && typeof c.reflection !== 'string') ||
+        (c.state === 'saved' && !['Agreement', 'Contrast', 'Complement', 'Recurring question', 'Other'].includes(c.relation ?? '')) ||
+        (c.state === 'dismissed' && (c.relation !== undefined || c.reflection !== undefined))) return false;
+      const key = JSON.stringify([c.leftId, c.rightId].sort());
+      if (pairs.has(key)) return false;
+      pairs.add(key);
+    }
   }
   return true;
 }

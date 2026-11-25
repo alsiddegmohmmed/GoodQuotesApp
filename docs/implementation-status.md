@@ -14,3 +14,13 @@ npx tsc --noEmit
 npx expo start
 ```
 Run the tests with Node 22+. Verify import preview and repeat import, manual capture, cold restart, favorite and daily passage, failure recovery and no sample records on iOS. The authoring environment has no GitHub clone/network access or installed Expo dependencies, so runtime checks and typecheck remain unverified.
+
+## Slice 02 — import and connections
+
+Added clipboard-based import of English Kindle My Clippings highlights, Readwise CSV, and attributed quote CSV (including the original Quote-only CSV format with explicit book/author). Preview shows new passages/books, title/author matches, repeated source records, ambiguous matches and skipped entries. Exact author/title matching is normalized but not edition verification. Original import dates remain raw source metadata; createdAt denotes local capture/import time. Separate Kindle notes/bookmarks and non-English metadata are skipped rather than guessed. Identical rows without stable source IDs are deduplicated within a source; distinct sources are not silently merged. File picker and direct sync are still pending.
+
+Discover now supports lexical passage search, a cross-book comparison suggestion using shared uncommon words, manual selection of two sources, saving a reader-authored relationship and reflection, editing and dismissing suggestions. Saved/dismissed pairs persist in the existing backward-compatible snapshot. This is NOT semantic understanding, AI-generated insight, or a conversational companion. No model is connected and no personal material is sent to a model. The next model-assisted slice must provide meaningful relationships with inspectable evidence, secure server-side credentials, consent and no fabricated reader history. The acceptance criteria in first-mobile-build.md remain unchanged.
+
+Profile provides an explicit native share-sheet JSON export of the complete local library, including notes and connections. Import/restore of this JSON, comprehensive deletion/correction, encryption, sync and identity/account isolation are still pending. Export is sensitive; the app removes its temporary cached file after sharing, but cannot control external copies.
+
+Tests added for quote parsing, attribution, repeat imports, ambiguity, cross-book evidence, saved/dismissed state and editing. Node tests and Expo runtime/typecheck remain unverified here. No personal CSV content was added to the repository.

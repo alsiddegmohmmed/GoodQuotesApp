@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import type { StackScreenProps } from '@react-navigation/stack';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomNavigation } from '../components/navigation/BottomNavigation';
-import { Screen, ScreenHeading } from '../components/layout/Screen';
+import { DiscoverScreen } from '../screens/DiscoverScreen';
+import { ProfileScreen } from '../screens/ProfileScreen';
 import { LibraryScreen } from '../screens/LibraryScreen';
 import { TodayScreen } from '../screens/TodayScreen';
 import { colors, radius, spacing, typography } from '../theme/tokens';
@@ -14,7 +15,7 @@ export function MainTabs({ navigation }: StackScreenProps<RootStackParamList, 'M
   const openBook = (bookId: string) => navigation.navigate('BookDetail', { bookId });
   return <SafeAreaView edges={['top', 'left', 'right', 'bottom']} style={styles.safe}>
     <View style={styles.content}>
-      {active === 'Today' ? <TodayScreen onOpenBook={openBook} /> : active === 'Library' ? <LibraryScreen onOpenBook={openBook} onAdd={() => navigation.navigate('LibraryTools', { mode: 'add' })} onImport={() => navigation.navigate('LibraryTools', { mode: 'import' })} /> : active === 'Discover' ? <Screen><ScreenHeading title="Discover" subtitle="Explore connections and new reading directions." /><Text style={styles.body}>This experience is not designed or connected yet.</Text></Screen> : <Screen><ScreenHeading title="Profile" subtitle="Your personal reading memory." /><Text style={styles.body}>Reading statistics, preferences and saved passages will be designed later.</Text><Pressable accessibilityRole="button" onPress={() => navigation.navigate('LegacyQuotes')} style={styles.legacy}><Text style={styles.link}>Open original quote feed</Text><Text style={styles.meta}>Requires the existing backend.</Text></Pressable></Screen>}
+      {active === 'Today' ? <TodayScreen onOpenBook={openBook} /> : active === 'Library' ? <LibraryScreen onOpenBook={openBook} onAdd={() => navigation.navigate('LibraryTools', { mode: 'add' })} onImport={() => navigation.navigate('LibraryTools', { mode: 'import' })} onImportQuotes={() => navigation.navigate('LibraryTools', { mode: 'quotes' })} /> : active === 'Discover' ? <DiscoverScreen onOpenBook={openBook} /> : <ProfileScreen onLegacy={() => navigation.navigate('LegacyQuotes')} />}
     </View>
     <BottomNavigation active={active} onSelect={setActive} />
   </SafeAreaView>;
